@@ -3,13 +3,10 @@
 #Ayush Gupta               Roll no 33228
 #L - 10 
 
-RED="\e[31m"
-MAGNETA="\e[35m"
+RED="\e[31m""
 GREEN="\e[32m"
 ENDCOLOR="\e[0m"
-CYAN="\e[36m"
 YELLOW="\e[33m"
-BLUE="\e[34m"
 
 createf(){
 	#echo "\n${YELLOW}***********************************************${ENDCOLOR}" 

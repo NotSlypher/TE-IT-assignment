@@ -4,12 +4,9 @@
 #L - 10 
 
 RED="\e[31m"
-MAGNETA="\e[35m"
 GREEN="\e[32m"
 ENDCOLOR="\e[0m"
-CYAN="\e[36m"
 YELLOW="\e[33m"
-BLUE="\e[34m"
 
 createf(){
 	#echo "\n${YELLOW}***********************************************${ENDCOLOR}" 
@@ -28,9 +25,101 @@ createf(){
 		touch $fname.txt
 		echo -e "${GREEN}Created file named: $fname ${ENDCOLOR}"
 		 
-		echo -e "MODELNO|TYPE|MODELNAME"  >> $fname.txt
+		echo -e "${GREEN}MODELNO|TYPE|MODELNAME${ENDCOLOR}"  >> $fname.txt
 
 	fi
+}
+
+displayf(){
+	echo -e "\n${YELLOW}***********************************************${ENDCOLOR}" 
+	echo -e "\n${GREEN}Current Address Book is shown below \n${ENDCOLOR}"
+	cat $fname.txt | column -t -s "|" | sort
+	echo -e "\n${YELLOW}***********************************************${ENDCOLOR}"
+}
+
+insertf(){
+		echo -e "${YELLOW}***********************************************${ENDCOLOR}"
+		echo -e "\nInserting a new Record${ENDCOLOR}" 
+				
+		echo -n "Enter Model no. : "
+		while(true)
+			do
+				read modno
+				if [ ${#modno} -gt 0 ]
+				then
+							
+					break
+				else
+					echo -e "${RED}Model no. cannot be empty${ENDCOLOR}"
+				fi 
+			done
+					
+		echo -e -n "${GREEN}Enter type : ${ENDCOLOR}"
+		read type
+				
+		echo -n -e "${GREEN}Enter model name : ${ENDCOLOR}"
+		read mname
+				
+		echo -e "${GREEN}\nEntering record \n$modno \t $type \t $mname${ENDCOLOR}"			
+		echo "$modno|$type|$mname" >> $fname.txt
+}
+
+deletef(){
+	echo -e "${YELLOW}\n*********************************************${ENDCOLOR}" 
+	echo -e -n "${GREEN}Enter the record to be deleted : ${ENDCOLOR}"
+	read delrec
+	flag=`cat $fname.txt | grep $delrec | wc -l`
+	
+	if [ $flag -eq 1 ] #checking valid Record
+	then 
+		deleted_item=`cat $fname.txt | grep $delrec`
+		sed -i "/^$delrec/d" $fname.txt
+			# Deleting Record
+					
+		echo -e "${GREEN}Record Deleted Successfuly\n Record: $deleted_item ${ENDCOLOR}"
+				
+	else
+		echo -e "${RED}Entered Record doesn't exist!!!${ENDCOLOR}"
+	fi
+	echo -e "${YELLOW}\n*********************************************${ENDCOLOR}"
+}
+
+updatef(){
+	echo -e "${YELLOW}\n*********************************************${ENDCOLOR}" 
+	echo -e -n "${GREEN}Enter the Model no to be Updated : ${ENDCOLOR}"
+	read uprec
+	flag=`cat $fname.txt | grep $uprec | wc -l`
+	
+	if [ $flag -eq 0 ] #checking valid Record
+	then 
+		echo -e "${RED}Entered Model no doesn't exist, Check Again!!!${ENDCOLOR}"
+	else
+		old=`cat $fname.txt | grep $uprec`
+		echo -e "${GREEN}Enter the following values to modify the record:${ENDCOLOR}"
+		
+		echo -e -n "${GREEN}Enter type : "
+		read type
+				
+		echo -n -e "${GREEN}Enter model name : "
+		read mname
+				
+		echo -e "${GREEN}\Updating record \n$uprec \t $type \t $mname"
+	fi
+	 
+}
+
+searchf(){
+	echo -e "\n***********************************************" 
+	echo -e -n "${GREEN}Enter the record to be searched : ${ENDCOLOR}"
+	read searchRec
+	grep $searchRec $fname.txt
+	echo -e "***********************************************" 
+}
+
+exitf(){
+	echo -e "${YELLOW}***********************************************${ENDCOLOR}"
+	echo -e "                  Exiting                      "
+	echo -e "${YELLOW}***********************************************${ENDCOLOR}"
 }
 
 createf
@@ -49,7 +138,7 @@ while(true)
 		echo -e "${YELLOW}|      6) Search a Record                     |${ENDCOLOR}"
 		echo -e "${YELLOW}|      7) Exit                                |${ENDCOLOR}"
 		echo -e "${YELLOW}***********************************************${ENDCOLOR}"
-		echo -e -n "\nEnter your choice : "
+		echo -e -n "${GREEN}\nEnter your choice : ${ENDCOLOR}"
 		read choice
 		
 		#switch case
@@ -59,75 +148,27 @@ while(true)
 			;;
 			
 			2) 
-				echo -e "\n${YELLOW}***********************************************${ENDCOLOR}" 
-				echo -e "\n${GREEN}Current Address Book is shown below \n${ENDCOLOR}"
-				cat $fname.txt | column -t -s "|" | sort
-				echo -e "\n${YELLOW}***********************************************${ENDCOLOR}" 
+				displayf 
 			;;
 				
 			3)
-				echo -e "${YELLOW}***********************************************${ENDCOLOR}"
-				echo -e "\nInserting a new Record" 
-				
-				echo -n "Enter Model no. : "
-				while(true)
-					do
-						read modno
-						if [ ${#modno} -gt 0 ]
-						then
-							
-							break
-						else
-							echo -e "${RED}Model no. cannot be empty${ENDCOLOR}"
-						fi 
-					done
-					
-				echo -n "Enter type : "
-				read type
-				
-				echo -n "Enter model name : "
-				read mname
-				
-				echo -e "\nEntering record \n$modno \t $type \t $mname"			
-				echo "$modno|$type|$mname" >> $fname.txt
+				insertf
 			;;
 			
 			4)
-				echo -e "${YELLOW}\n*********************************************${ENDCOLOR}" 
-				echo -e -n "Enter the record to be deleted : "
-				read delrec
-				flag=`cat $fname.txt | grep $delrec | wc -l`
-	
-				if [ $flag -eq 1 ] #checking valid Record
-				then 
-					deleted_item=`cat $fname.txt | grep $delrec`
-					sed -i "/^$delrec/d" $fname.txt
-						# Deleting Record
-					
-					echo -e "${GREEN}Record Deleted Successfuly\n Record: $deleted_item ${ENDCOLOR}"
-				
-				else
-					echo -e "${RED}Entered Record doesn't exist!!!{ENDCOLOR}{ENDCOLOR}"
-				fi
-				echo -e "${YELLOW}\n*********************************************${ENDCOLOR}" 
+				deletef 
 			;;
 
 			5)
-
+				updatef
 			;;
 			
 			6)
-				echo -e "\n***********************************************" 
-				echo -e -n "Enter the record to be searched : "
-				read searchRec
-				grep $searchRec $fname.txt
-				echo -e "***********************************************" 
+				searchf
 			;;
 			
 			7)
-				echo -e "${YELLOW}***********************************************${ENDCOLOR}"
-				echo -e "                  Exiting                      "
-				echo -e "${YELLOW}***********************************************${ENDCOLOR}"
+				exitf
 				break
 			;;
 
